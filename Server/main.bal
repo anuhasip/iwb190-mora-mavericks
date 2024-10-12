@@ -1,6 +1,7 @@
 import ballerina/http;
 import ballerinax/mongodb;
 import ballerina/log;
+import ballerina/lang.value;
 //import ballerina/io;
 
 public type UserInput record {
@@ -111,3 +112,61 @@ service /user on userService {
 //     readonly string id;
 //     *UserInput;
 // |};
+
+public type Product record {
+    string name;
+    float price;
+
+};
+
+service /products on userService {
+
+    private final mongodb:Database comp_proj;
+    private final mongodb:Collection products;
+
+    function init() returns error? {
+        self.comp_proj = check mongoDb->getDatabase("comp_proj");
+        self.products = check self.comp_proj->getCollection("products");
+    }
+
+    // GET request to retrieve all products
+    resource function get all(http:Caller caller, http:Request req) returns error? {
+        stream<Product, error?> productStream = check self.products->find({});
+        
+        Product[] productList = [];
+        error? e = productStream.forEach(function(Product product) {
+            productList.push(product);
+        });
+
+        if (e is error) {
+            log:printError("Error retrieving products", e);
+            http:Response conflictResponse = new;
+            conflictResponse.statusCode = 500;
+            conflictResponse.setJsonPayload({ "message": "Failed to retrieve products" });
+            check caller->respond(conflictResponse);
+        } else {
+            http:Response response = new;
+            response.setJsonPayload(value:toJson(productList));
+            check caller->respond(response);
+        }
+    }
+
+    // GET request to retrieve a product by its ID
+    resource function get [string id](http:Caller caller, http:Request req) returns error? {
+        map<json> filter = { "_id": { "$oid": id } };
+
+        Product|error? result = self.products->findOne(filter, {}, (), Product);
+
+        if (result is Product) {
+            http:Response response = new;
+            response.setJsonPayload(value:toJson(result));
+            check caller->respond(response);
+        } else if (result is error) {
+            log:printError("Failed to retrieve product", result);
+            http:Response conflictResponse = new;
+            conflictResponse.statusCode = 404;
+            conflictResponse.setTextPayload("Product not found");
+            check caller->respond(conflictResponse);
+        }
+    }
+}
