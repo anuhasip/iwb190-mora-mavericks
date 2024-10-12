@@ -1,13 +1,7 @@
 import ballerina/http;
 import ballerinax/mongodb;
 import ballerina/log;
-import ballerina/lang.value;
-//import ballerina/io;
-
-public type UserInput record {
-    string username;
-    string password;
-};
+import ballerina/uuid;
 
 configurable string host = "localhost";
 configurable int port = 27017;
@@ -29,14 +23,18 @@ service /user on userService {
 
     private final mongodb:Database comp_proj;
     private final mongodb:Collection users;
+    private final mongodb:Collection shops;
+    private final mongodb:Collection items;
 
     function init() returns error? {
         self.comp_proj = check mongoDb->getDatabase("users");
         self.users = check self.comp_proj->getCollection("users");
+        self.shops = check self.comp_proj->getCollection("shops");
+        self.items = check self.comp_proj->getCollection("items");
     }
 
     // POST request for user signup
-    resource function post signup(http:Caller caller, http:Request req) returns error? {
+    resource function post signup(http:Caller caller, http:Request req) returns error? {        
         // Get the JSON payload from the request
         json signupPayload =check req.getJsonPayload();
 
@@ -104,69 +102,102 @@ service /user on userService {
             return;
         }
      }
-}
 
-
-
-// public type User record {|
-//     readonly string id;
-//     *UserInput;
-// |};
-
-public type Product record {
-    string name;
-    float price;
-
-};
-
-service /products on userService {
-
-    private final mongodb:Database comp_proj;
-    private final mongodb:Collection products;
-
-    function init() returns error? {
-        self.comp_proj = check mongoDb->getDatabase("comp_proj");
-        self.products = check self.comp_proj->getCollection("products");
+    //Get all shops
+     resource function get shops() returns Shop[]|error {
+        stream<Shop, error?> shopStream = check self.shops->find();
+        return from Shop shop in shopStream select shop;
     }
 
-    // GET request to retrieve all products
-    resource function get all(http:Caller caller, http:Request req) returns error? {
-        stream<Product, error?> productStream = check self.products->find({});
-        
-        Product[] productList = [];
-        error? e = productStream.forEach(function(Product product) {
-            productList.push(product);
-        });
-
-        if (e is error) {
-            log:printError("Error retrieving products", e);
-            http:Response conflictResponse = new;
-            conflictResponse.statusCode = 500;
-            conflictResponse.setJsonPayload({ "message": "Failed to retrieve products" });
-            check caller->respond(conflictResponse);
-        } else {
-            http:Response response = new;
-            response.setJsonPayload(value:toJson(productList));
-            check caller->respond(response);
+    //Get shop by ID
+    resource function get shops/[string id]() returns Shop|http:NotFound|error {
+        stream<Shop, error?> findResult = check self.shops->find({id});
+        Shop[] result = check from Shop s in findResult
+            select s;
+        if result.length() != 1 {
+            return error(string `Failed to find a shop with id ${id}`);
         }
+        return result[0];
     }
 
-    // GET request to retrieve a product by its ID
-    resource function get [string id](http:Caller caller, http:Request req) returns error? {
-        map<json> filter = { "_id": { "$oid": id } };
+    //Add a shop element
+    resource function post shops(ShopInput input) returns Shop|error {
+        string id = uuid:createType1AsString();
+        Shop shop = {id, ...input};
+        check self.shops->insertOne(shop);
+        return shop;
+    }
 
-        Product|error? result = self.products->findOne(filter, {}, (), Product);
-
-        if (result is Product) {
-            http:Response response = new;
-            response.setJsonPayload(value:toJson(result));
-            check caller->respond(response);
-        } else if (result is error) {
-            log:printError("Failed to retrieve product", result);
-            http:Response conflictResponse = new;
-            conflictResponse.statusCode = 404;
-            conflictResponse.setTextPayload("Product not found");
-            check caller->respond(conflictResponse);
+    //Update a shop
+    resource function put shops/[string id](ShopUpdate update) returns Shop|error {
+        mongodb:UpdateResult updateResult = check self.shops->updateOne({id}, {set: update});
+        if updateResult.modifiedCount != 1 {
+            return error(string `Failed to update the shop with id ${id}`);
         }
+        stream<Shop, error?> findResult = check self.shops->find({id});
+        Shop[] result = check from Shop s in findResult
+            select s;
+        if result.length() != 1 {
+            return error(string `Failed to find a shop with id ${id}`);
+        }
+        return result[0];
+    }
+
+    //Delete a shop
+    resource function delete shops/[string id]() returns string|error {
+        mongodb:DeleteResult deleteResult = check self.shops->deleteOne({id});
+        if deleteResult.deletedCount != 1 {
+            return error(string `Failed to delete the shop ${id}`);
+        }
+        return id;
+    }
+
+    //Get all items
+     resource function get items() returns Item[]|error {
+        stream<Item, error?> itemStream = check self.items->find();
+        return from Item item in itemStream select item;
+    }
+
+    //Get item by ID
+    resource function get items/[string id]() returns Item|http:NotFound|error {
+        stream<Item, error?> findResult = check self.items->find({id});
+        Item[] result = check from Item i in findResult
+            select i;
+        if result.length() != 1 {
+            return error(string `Failed to find an item with id ${id}`);
+        }
+        return result[0];
+    }
+
+    //Add an item
+    resource function post items(ItemInput input) returns Item|error {
+        string id = uuid:createType1AsString();
+        Item item = {id, ...input};
+        check self.items->insertOne(item);
+        return item;
+    }
+
+    //Delete an item
+    resource function delete items/[string id]() returns string|error {
+        mongodb:DeleteResult deleteResult = check self.items->deleteOne({id});
+        if deleteResult.deletedCount != 1 {
+            return error(string `Failed to delete the item ${id}`);
+        }
+        return id;
+    }
+
+    //Update an item
+    resource function put items/[string id](ItemUpdate update) returns Item|error {
+        mongodb:UpdateResult updateResult = check self.items->updateOne({id}, {set: update});
+        if updateResult.modifiedCount != 1 {
+            return error(string `Failed to update the item with id ${id}`);
+        }
+        stream<Item, error?> findResult = check self.items->find({id});
+        Item[] result = check from Item i in findResult
+            select i;
+        if result.length() != 1 {
+            return error(string `Failed to find an item with id ${id}`);
+        }
+        return result[0];
     }
 }
