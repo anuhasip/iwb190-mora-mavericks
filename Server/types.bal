@@ -16,7 +16,7 @@ public type ShopInput record {|
 |};
 
 public type Shop record {|
-    readonly string id;
+    string id;
     *ShopInput;
     Item[] items;
 |};
@@ -29,7 +29,7 @@ public type ShopUpdate record {|
 |};
 
 public type ItemInput record {|
-    string id;
+    string shopId;
     string itemName;
     int quantity;
     float unitPrice;
@@ -37,12 +37,12 @@ public type ItemInput record {|
 |};
 
 public type Item record {|
-    readonly string itemId;
+    string id;
     *ItemInput;
 |};
 
 public type ItemUpdate record {|
-    string id?;
+    string shopId?;
     string itemName?;
     int quantity?;
     float unitPrice?;

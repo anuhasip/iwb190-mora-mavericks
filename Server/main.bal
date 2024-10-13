@@ -111,8 +111,8 @@ service /api on userService {
             {
                 \$lookup: {
                     'from: "items",
-                    localField: "itemId",
-                    foreignField: "id",
+                    localField: "id",
+                    foreignField: "shopId",
                     'as: "items"
                 }
             }
@@ -132,8 +132,8 @@ service /api on userService {
             {
                 \$lookup: {
                     'from: "items",
-                    localField: "itemId",
-                    foreignField: "id",
+                    localField: "id",
+                    foreignField: "shopId",
                     'as: "items"
                 }
             },
@@ -147,8 +147,8 @@ service /api on userService {
                     description: 1,
                     location: 1,
                     items: {
-                        itemId: {"items.itemId": 1},
                         id: {"items.id": 1},
+                        shopId: {"items.shopId": 1},
                         itemName: {"items.itemName": 1},
                         quantity: {"items.quantity": 1},
                         unitPrice: {"items.unitPrice": 1},
@@ -193,8 +193,8 @@ service /api on userService {
             {
                 \$lookup: {
                     'from: "items",
-                    localField: "itemId",
-                    foreignField: "id",
+                    localField: "id",
+                    foreignField: "shopId",
                     'as: "items"
                 }
             },
@@ -208,8 +208,8 @@ service /api on userService {
                     description: 1,
                     location: 1,
                     items: {
-                        itemId: {"items.itemId": 1},
                         id: {"items.id": 1},
+                        shopId: {"items.shopId": 1},
                         itemName: {"items.itemName": 1},
                         quantity: {"items.quantity": 1},
                         unitPrice: {"items.unitPrice": 1},
@@ -253,8 +253,8 @@ service /api on userService {
 
     //Add an item
     resource function post items(ItemInput input) returns Item|error {
-        string itemId = uuid:createType1AsString();
-        Item item = {itemId, ...input};
+        string id = uuid:createType1AsString();
+        Item item = {id, ...input};
         check self.items->insertOne(item);
         return item;
     }
