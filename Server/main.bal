@@ -173,21 +173,50 @@ service /api on userService {
         return shop;
     }
 
-    //DONE UNTIL HERE
-
     //Update a shop
     resource function put shops/[string id](ShopUpdate update) returns Shop|error {
         mongodb:UpdateResult updateResult = check self.shops->updateOne({id}, {set: update});
         if updateResult.modifiedCount != 1 {
             return error(string `Failed to update the shop with id ${id}`);
         }
-        stream<Shop, error?> findResult = check self.shops->find({id});
-        Shop[] result = check from Shop s in findResult
-            select s;
-        if result.length() != 1 {
-            return error(string `Failed to find a shop with id ${id}`);
+        
+        stream<Shop, error?> resultStream = check self.shops->aggregate([
+            {
+                \$match: {
+                    id: id
+                }
+            },
+            {
+                \$lookup: {
+                    'from: "shopItems",
+                    localField: "id",
+                    foreignField: "itemId",
+                    'as: "shopItems"
+                }
+            },
+            {
+                \$limit: 1
+            },
+            {
+                \$project: {
+                    id: 1,
+                    image: 1,
+                    description: 1,
+                    location: 1,
+                    items: {
+                        itemId: {"items.itemId": 1},
+                        itemName: {"items.itemName": 1},
+                        unitPrice: {"items.unitPrice": 1},
+                        description: {"items.description": 1}
+                    }
+                }
+            }
+        ]);
+        record {Shop value;}|error? result = resultStream.next();
+        if result is error? {
+            return error(string `Cannot find the Shop with id: ${id}`);
         }
-        return result[0];
+        return result.value;
     }
 
     //Delete a shop
@@ -247,4 +276,7 @@ service /api on userService {
         }
         return result[0];
     }
+
+    
+    
 }
