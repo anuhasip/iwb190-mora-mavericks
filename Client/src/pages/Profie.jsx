@@ -11,11 +11,11 @@ function Profile() {
   
     const [clientData, setClientData] = useState(null);
   
-    const url = `${process.env.REACT_APP_API_URL}/api/client/client-details`;
+    const url = `${process.env.REACT_APP_API_URL}/api/user_details/${user.c_id}`;
   
     const getClientDetails = () => {
-      axios.get(url, {params: { c_id: user.c_id }}).then((response) => {
-        setClientData(response.data.data[0]);
+      axios.get(url).then((response) => {
+        setClientData(response.data);
         console.log(response.status, response.data);
       });
     }

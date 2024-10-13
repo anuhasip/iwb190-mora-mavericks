@@ -3,6 +3,8 @@ import ballerinax/mongodb;
 import ballerina/log;
 import ballerina/uuid;
 
+
+
 configurable string host = "localhost";
 configurable int port = 27017;
 
@@ -17,8 +19,19 @@ final mongodb:Client mongoDb = check new ({
 
 
 // HTTP listener for the service
+
 listener http:Listener userService = new(8080);
 
+// The service-level CORS config applies globally to each `resource`.
+@http:ServiceConfig {
+    cors: {
+        allowOrigins: ["http://localhost:3000"],
+        allowCredentials: false,
+        allowHeaders: ["Authorization", "Content-Type"],
+        exposeHeaders: ["Content-Length"],
+        maxAge: 84900
+    }
+}
 service /api on userService {
 
     private final mongodb:Database comp_proj;
@@ -28,7 +41,7 @@ service /api on userService {
     private final mongodb:Collection shopItems;
 
     function init() returns error? {
-        self.comp_proj = check mongoDb->getDatabase("users");
+        self.comp_proj = check mongoDb->getDatabase("ballerina-e-shop");
         self.users = check self.comp_proj->getCollection("users");
         self.shops = check self.comp_proj->getCollection("shops");
         self.items = check self.comp_proj->getCollection("items");
@@ -40,16 +53,21 @@ service /api on userService {
         // Get the JSON payload from the request
         json signupPayload =check req.getJsonPayload();
 
-        UserInput userDetails = check signupPayload.cloneWithType(UserInput);
+        UserRegister userDetails = check signupPayload.cloneWithType(UserRegister);
 
         //check if the user is already available
-        map<json> filter = {username: userDetails.username};
-        stream<UserInput, error?> userStream = check self.users->find(filter);
+        map<json> filter = {email: userDetails.email};
+        stream<UserRegister, error?> userStream = check self.users->find(filter);
 
-        if (userStream.next() is record {| UserInput value; |}) {
+        if (userStream.next() is record {| UserRegister value; |}) {
             log:printError("User already exists");
+            json errorResponse = {
+                register: false,
+                message: "User already exists"
+            };
             http:Response conflictResponse = new;
-            conflictResponse.setTextPayload("User already exists");
+            conflictResponse.statusCode = 401;
+            conflictResponse.setJsonPayload(errorResponse);
             check caller->respond(conflictResponse);
             return;
         }
@@ -58,8 +76,12 @@ service /api on userService {
         check self.users->insertOne(userDetails);
 
         // send a sucess response
+        json successResponse = {
+            register: true
+        };
         http:Response response = new;
-        response.setTextPayload("User signed up successfully");
+        response.statusCode = 200;
+        response.setJsonPayload(successResponse);
         check caller->respond(response);
     }
 
@@ -77,33 +99,73 @@ service /api on userService {
     //      Convert the payload to a map
         map<json> jsonPayload = <map<json>>loginpayload;
 
-        if (!jsonPayload.hasKey("username") || !jsonPayload.hasKey("password")) {
+        if (!jsonPayload.hasKey("email") || !jsonPayload.hasKey("password")) {
             http:Response res = new;
             res.statusCode = 400;
-            res.setJsonPayload({ "message": "Username and password are required." });
+            res.setJsonPayload({ "message": "Email and password are required." });
             check caller->respond(res);
             return;
         }
 
-        UserInput userDetails = check loginpayload.cloneWithType(UserInput);
+        UserLogin userDetails = check loginpayload.cloneWithType(UserLogin);
 
         // Check if the username exists and the password matches
-        map<json> reg_user = {username: userDetails.username, password: userDetails.password};
+        map<json> reg_user = {email: userDetails.email, password: userDetails.password};
 
-        stream<UserInput, error?> userStream = check self.users->find(reg_user);
+        stream<UserRecord, error?> userStream = check self.users->find(reg_user);
 
-        if (userStream.next() is record {| UserInput value; |}) {
-            http:Response response = new;
-            response.setTextPayload("User logged in successfully");
-            check caller->respond(response);
+        var nextResult = userStream.next();
+
+        if (nextResult is record {| UserRecord value; |}) {
+            //record  {UserInput value;}|error? userRecord = userStream.next();
+            json idField = nextResult.value._id;
+            if idField is map<json> {
+                string? userId = idField["$oid"].toString();
+    
+                json successResponse = {
+                    login: true,
+                    c_id: userId,  
+                    fname: nextResult.value.first_name
+                };
+                http:Response response = new;
+                response.statusCode = 200;
+                response.setJsonPayload(successResponse);
+                check caller->respond(response);
+            }
         } else{
+            // If login fails, return an error message in JSON format
             log:printError("Username or password is invalid");
+            json errorResponse = { "login" : false, "message": "Invalid username or password" };
             http:Response conflictResponse = new;
-            conflictResponse.setTextPayload("Username or password is invalid");
+            conflictResponse.statusCode = 401;
+            conflictResponse.setJsonPayload(errorResponse);
             check caller->respond(conflictResponse);
-            return;
         }
      }
+
+resource function get user_details/[string id](http:Caller caller, http:Request req) returns error? {
+    
+    map<json> filter = {_id : {"$oid": id}};
+    
+    stream<UserFullRecord, error?> userStream = check self.users->find(filter);
+
+    var nextResult = userStream.next();
+    if (nextResult is record {| UserFullRecord value; |}) {
+        http:Response response = new;
+        response.statusCode = 200;
+        response.setJsonPayload(nextResult.value);
+        check caller->respond(response);
+    //return result[0];
+    } else {
+        log:printError("User id is invalid");
+        json errorResponse = { "message": "Invalid user id" };
+        http:Response conflictResponse = new;
+        conflictResponse.statusCode = 401;
+        conflictResponse.setJsonPayload(errorResponse);
+        check caller->respond(conflictResponse);
+    }
+}
+
 
     //Get all shops
      resource function get shops() returns Shop[]|error {

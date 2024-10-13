@@ -19,7 +19,7 @@ function Register() {
     console.log(register);
   };
 
-  const url = `${process.env.REACT_APP_API_URL}/api/client/register`;
+  const url = `${process.env.REACT_APP_API_URL}/api/signup`;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -29,14 +29,11 @@ function Register() {
       .post(url, register)
       .then((response) => {
         console.log(response.status, response.data);
-        if (!response.data.register) {
-          setRegerr(response.data.message);
-        } else {
-          navigate("/login");
-        }
+        navigate("/login");
       })
       .catch((error) => {
-        console.log(error.status);
+        setRegerr(error.response.data.message);
+        console.log(error);
       });
     }
   };

@@ -1,6 +1,30 @@
-public type UserInput record {|
-    string username;
+public type UserRegister record {|
+    string email;
     string password;
+    string first_name;
+    string last_name;
+    string address;
+    string phone_number;
+    string DOB;
+|};
+
+public type UserLogin record {|
+    string email;
+    string password;
+|};
+
+public type UserRecord record {|
+    json _id;
+    string first_name;
+|};
+
+public type UserFullRecord record {|
+    string email;
+    string first_name;
+    string last_name;
+    string address;
+    string phone_number;
+    string DOB;
 |};
 
 // public type User record {|

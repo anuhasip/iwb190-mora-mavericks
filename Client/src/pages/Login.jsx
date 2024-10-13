@@ -13,12 +13,13 @@ function Login() {
     setLogin({ ...login, [e.target.id]: e.target.value });
   };
 
-  const url = `${process.env.REACT_APP_API_URL}/api/client/login`;
+  const url = `${process.env.REACT_APP_API_URL}/api/login`;
 
   const handleSubmit = (e) => {
     if (login.email == "" || login.password.length < 8)
     {
-      setLogerr("Please Enter valid Email or Password")
+      setLogerr("Please Enter valid Email or Password");
+      return ;
     }
     e.preventDefault();
     axios
@@ -28,12 +29,13 @@ function Login() {
         if (!response.data.login) {
           setLogerr(response.data.message);
         } else {
-          setUser({c_id: response.data.c_id, fname: response.data.first_name});
+          setUser({c_id: response.data.c_id, fname: response.data.user_name});
           navigate("/");
         }
       })
       .catch((error) => {
-        console.log(error.status);
+        setLogerr(error.response.data.message);
+        console.log(error.response.data.message);
       });
   };
 
