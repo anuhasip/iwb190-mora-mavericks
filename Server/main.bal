@@ -110,10 +110,10 @@ service /api on userService {
         stream<Shop, error?> resultStream = check self.shops->aggregate([
             {
                 \$lookup: {
-                    'from: "shopItems",
-                    localField: "id",
-                    foreignField: "itemId",
-                    'as: "shopItems"
+                    'from: "items",
+                    localField: "itemId",
+                    foreignField: "id",
+                    'as: "items"
                 }
             }
         ]);
@@ -125,15 +125,16 @@ service /api on userService {
         stream<Shop, error?> resultStream = check self.shops->aggregate([
             {
                 \$match: {
+                    //check this if errors come
                     id: id
                 }
             },
             {
                 \$lookup: {
-                    'from: "shopItems",
-                    localField: "id",
-                    foreignField: "itemId",
-                    'as: "shopItems"
+                    'from: "items",
+                    localField: "itemId",
+                    foreignField: "id",
+                    'as: "items"
                 }
             },
             {
@@ -147,7 +148,9 @@ service /api on userService {
                     location: 1,
                     items: {
                         itemId: {"items.itemId": 1},
+                        id: {"items.id": 1},
                         itemName: {"items.itemName": 1},
+                        quantity: {"items.quantity": 1},
                         unitPrice: {"items.unitPrice": 1},
                         description: {"items.description": 1}
                     }
@@ -183,15 +186,16 @@ service /api on userService {
         stream<Shop, error?> resultStream = check self.shops->aggregate([
             {
                 \$match: {
+                    //check this if errors come
                     id: id
                 }
             },
             {
                 \$lookup: {
-                    'from: "shopItems",
-                    localField: "id",
-                    foreignField: "itemId",
-                    'as: "shopItems"
+                    'from: "items",
+                    localField: "itemId",
+                    foreignField: "id",
+                    'as: "items"
                 }
             },
             {
@@ -205,7 +209,9 @@ service /api on userService {
                     location: 1,
                     items: {
                         itemId: {"items.itemId": 1},
+                        id: {"items.id": 1},
                         itemName: {"items.itemName": 1},
+                        quantity: {"items.quantity": 1},
                         unitPrice: {"items.unitPrice": 1},
                         description: {"items.description": 1}
                     }

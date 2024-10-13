@@ -29,26 +29,22 @@ public type ShopUpdate record {|
 |};
 
 public type ItemInput record {|
+    string id;
     string itemName;
-    //int quantity;
+    int quantity;
     float unitPrice;
     string description;
 |};
 
-public type ItemUpdate record {|
-    string itemName?;
-    //int quantity?;
-    float unitPrice?;
-    string description?;
-|};
-
 public type Item record {|
-    string itemId;
+    readonly string itemId;
     *ItemInput;
 |};
 
-public type ShopItemInput record {|
-    string id;
-    string itemId;
-    int quantity;
+public type ItemUpdate record {|
+    string id?;
+    string itemName?;
+    int quantity?;
+    float unitPrice?;
+    string description?;
 |};
