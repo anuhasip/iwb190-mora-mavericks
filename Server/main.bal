@@ -37,6 +37,7 @@ service /api on userService {
 
     // POST request for user signup
     resource function post signup(http:Caller caller, http:Request req) returns error? {        
+    resource function post signup(http:Caller caller, http:Request req) returns error? {        
         // Get the JSON payload from the request
         json signupPayload =check req.getJsonPayload();
 
