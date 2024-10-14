@@ -1,7 +1,7 @@
 import ballerina/http;
 import ballerinax/mongodb;
 import ballerina/log;
-
+import ballerina/crypto;
 
 
 configurable string host = "localhost";
@@ -71,6 +71,10 @@ service /api on userService {
             return;
         }
 
+        // Hash the password using bcrypt
+        byte[] hashedPassword = crypto:hashSha256(userDetails.password.toBytes());
+        userDetails.password = hashedPassword.toBase16();
+
         // Insert the new user into the MongoDB collection
         check self.users->insertOne(userDetails);
 
@@ -107,6 +111,10 @@ service /api on userService {
         }
 
         UserLogin userDetails = check loginpayload.cloneWithType(UserLogin);
+
+        // Hash the password using bcrypt
+        byte[] hashedPassword = crypto:hashSha256(userDetails.password.toBytes());
+        userDetails.password = hashedPassword.toBase16();
 
         // Check if the username exists and the password matches
         map<json> reg_user = {email: userDetails.email, password: userDetails.password};
