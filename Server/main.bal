@@ -348,55 +348,39 @@ resource function get shop_details/[string id](http:Caller caller, http:Request 
 
     
 
-    //Update a shop
-    resource function put shops/[string id](ShopUpdate update) returns Shop|error {
-        mongodb:UpdateResult updateResult = check self.shops->updateOne({id}, {set: update});
+   //Update a shop
+    resource function put shop_update/[string id](ShopUpdate update) returns ShopRegister|error {
+        // Correctly format the ObjectId
+        map<json> filter = {_id: { "$oid": id }};
+
+        
+        // Perform the update operation
+        mongodb:UpdateResult updateResult = check self.shops->updateOne(filter, {set:update});
+        log:printInfo("Update result: " + updateResult.toString());
+        
+        //Check if the update was successful
         if updateResult.modifiedCount != 1 {
             return error(string `Failed to update the shop with id ${id}`);
         }
+
+        // Find the updated shop document
+         stream<ShopRegister, error?> findResult = check self.shops->find(filter);
+        ShopRegister[] result = check from ShopRegister i in findResult
+            select i;
         
-        stream<Shop, error?> resultStream = check self.shops->aggregate([
-            {
-                \$match: {
-                    id: id
-                }
-            },
-            {
-                \$lookup: {
-                    'from: "shopItems",
-                    localField: "id",
-                    foreignField: "itemId",
-                    'as: "shopItems"
-                }
-            },
-            {
-                \$limit: 1
-            },
-            {
-                \$project: {
-                    id: 1,
-                    image: 1,
-                    description: 1,
-                    location: 1,
-                    items: {
-                        itemId: {"items.itemId": 1},
-                        itemName: {"items.itemName": 1},
-                        unitPrice: {"items.unitPrice": 1},
-                        description: {"items.description": 1}
-                    }
-                }
-            }
-        ]);
-        record {Shop value;}|error? result = resultStream.next();
-        if result is error? {
-            return error(string `Cannot find the Shop with id: ${id}`);
+        // Check if the shop was found
+        if result.length() != 1 {
+            return error(string `Failed to find the shop with id ${id}`);
         }
-        return result.value;
+        
+        // Return the updated shop
+        return result[0];
     }
 
     //Delete a shop
-    resource function delete shops/[string id]() returns string|error {
-        mongodb:DeleteResult deleteResult = check self.shops->deleteOne({id});
+    resource function delete shop_delete/[string id]() returns string|error {
+        map<json> filter = {_id : {"$oid": id}};
+        mongodb:DeleteResult deleteResult = check self.shops->deleteOne(filter);
         if deleteResult.deletedCount != 1 {
             return error(string `Failed to delete the shop ${id}`);
         }
@@ -559,7 +543,8 @@ resource function get item_details/[string id](http:Caller caller, http:Request 
 
     //Delete an item
     resource function delete items/[string id]() returns string|error {
-        mongodb:DeleteResult deleteResult = check self.items->deleteOne({id});
+        map<json> filter = {_id : {"$oid": id}};
+        mongodb:DeleteResult deleteResult = check self.items->deleteOne(filter);
         if deleteResult.deletedCount != 1 {
             return error(string `Failed to delete the item ${id}`);
         }
@@ -567,19 +552,34 @@ resource function get item_details/[string id](http:Caller caller, http:Request 
     }
 
     //Update an item
-    resource function put items/[string id](ItemUpdate update) returns Item|error {
-        mongodb:UpdateResult updateResult = check self.items->updateOne({id}, {set: update});
+    resource function put item_update/[string id](ItemUpdate update) returns ItemRecord|error {
+        // Correctly format the ObjectId
+        map<json> filter = {_id: { "$oid": id }};
+
+        
+        // Perform the update operation
+        mongodb:UpdateResult updateResult = check self.items->updateOne(filter, {set:update});
+        log:printInfo("Update result: " + updateResult.toString());
+        
+        //Check if the update was successful
         if updateResult.modifiedCount != 1 {
             return error(string `Failed to update the item with id ${id}`);
         }
-        stream<Item, error?> findResult = check self.items->find({id});
-        Item[] result = check from Item i in findResult
+
+        //Find the updated shop document
+        stream<ItemRecord, error?> findResult = check self.items->find(filter);
+        ItemRecord[] result = check from ItemRecord i in findResult
             select i;
+        
+        // Check if the shop was found
         if result.length() != 1 {
-            return error(string `Failed to find an item with id ${id}`);
+            return error(string `Failed to find the item with id ${id}`);
         }
+        
+        // Return the updated shop
         return result[0];
     }
+
 
     
     
