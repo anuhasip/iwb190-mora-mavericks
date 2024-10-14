@@ -2,8 +2,17 @@ import Carousel from "../../components/home/Carousel";
 import Category from "../../components/Category";
 import Services from "../../components/home/Services";
 import Flyer from "../../components/home/Flyer";
+import React, { useState } from "react";
 
 function Home() {
+    const [filteredProducts, setFilteredProducts] = useState(products);
+
+  const handleSearch = (searchTerm) => {
+    const results = products.filter((product) =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredProducts(results);
+  };
     return ( 
         <div className="container px-5 mt-3">
 
