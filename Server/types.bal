@@ -32,16 +32,36 @@ public type UserFullRecord record {|
 //     *UserInput;
 // |};
 
-public type ShopInput record {|
+public type ShopRegister record {|
+    string email;
+    string password;
     string name;
-    string image;
+    string image_url;
+    string description;
+    string location;
+|};
+
+public type ShopLogin record {|
+    string email;
+    string password;
+|};
+
+public type ShopRecord record {|
+    json _id;
+    string name;
+|};
+
+public type ShopFullRecord record {|
+    string email;
+    string name;
+    string image_url;
     string description;
     string location;
 |};
 
 public type Shop record {|
     readonly string id;
-    *ShopInput;
+    *ShopRegister;
     Item[] items;
 |};
 public type ShopUpdate record {|
@@ -52,11 +72,19 @@ public type ShopUpdate record {|
     //Item[] items?;
 |};
 
-public type ItemInput record {|
-    string itemName;
-    //int quantity;
-    float unitPrice;
+public type ItemFullRecord record {|
+    string item_name;
+    string image_url;
+    float unit_price;
     string description;
+    string shop_id;
+|};
+
+public type ItemRecord record {|
+    json _id;
+    string item_name;
+    string image_url;
+    float unit_price;
 |};
 
 public type ItemUpdate record {|
@@ -68,7 +96,7 @@ public type ItemUpdate record {|
 
 public type Item record {|
     string itemId;
-    *ItemInput;
+    *ItemFullRecord;
 |};
 
 public type ShopItemInput record {|
