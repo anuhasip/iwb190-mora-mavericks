@@ -1,7 +1,7 @@
 import ballerina/http;
 import ballerinax/mongodb;
 import ballerina/log;
-
+import ballerina/crypto;
 
 
 configurable string host = "localhost";
@@ -71,6 +71,9 @@ service /api on userService {
             return;
         }
 
+        byte[] hashedPassword = crypto:hashSha256(userDetails.password.toBytes());
+        userDetails.password = hashedPassword.toBase16();
+
         // Insert the new user into the MongoDB collection
         check self.users->insertOne(userDetails);
 
@@ -108,6 +111,8 @@ service /api on userService {
 
         UserLogin userDetails = check loginpayload.cloneWithType(UserLogin);
 
+        byte[] hashedPassword = crypto:hashSha256(userDetails.password.toBytes());
+        userDetails.password = hashedPassword.toBase16();
         // Check if the username exists and the password matches
         map<json> reg_user = {email: userDetails.email, password: userDetails.password};
 
@@ -169,7 +174,7 @@ resource function get user_details/[string id](http:Caller caller, http:Request 
 //Shop register
     resource function post shop_signup(http:Caller caller, http:Request req) returns error? {
         json shopPayload =check req.getJsonPayload();
-        ShopRegister shop = check shopPayload.cloneWithType(ShopRegister);
+        
         if (!(<map<json>>shopPayload).hasKey("email") ||  !(<map<json>>shopPayload).hasKey("password")) {
             http:Response res = new;
             res.statusCode = 401;
@@ -194,7 +199,12 @@ resource function get user_details/[string id](http:Caller caller, http:Request 
             check caller->respond(conflictResponse);
             return;
         }
-        check self.shops->insertOne(shop);
+
+        // Password Hashing
+        byte[] hashedPassword = crypto:hashSha256(shopDetails.password.toBytes());
+        shopDetails.password = hashedPassword.toBase16();
+
+        check self.shops->insertOne(shopDetails);
         json successResponse = {
             register: true
         };
@@ -227,6 +237,10 @@ resource function get user_details/[string id](http:Caller caller, http:Request 
         }
 
         ShopLogin shopDetails = check loginpayload.cloneWithType(ShopLogin);
+
+        // Password Hashing
+        byte[] hashedPassword = crypto:hashSha256(shopDetails.password.toBytes());
+        shopDetails.password = hashedPassword.toBase16();
 
         // Check if the username exists and the password matches
         map<json> reg_shop = {email: shopDetails.email, password: shopDetails.password};
