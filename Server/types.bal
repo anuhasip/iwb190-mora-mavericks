@@ -64,12 +64,12 @@ public type Shop record {|
     *ShopRegister;
     Item[] items;
 |};
+
 public type ShopUpdate record {|
     string name?;
-    string image?;
+    string image_url?;
     string description?;
     string location?;
-    //Item[] items?;
 |};
 
 public type ItemFullRecord record {|
@@ -88,9 +88,9 @@ public type ItemRecord record {|
 |};
 
 public type ItemUpdate record {|
-    string itemName?;
-    //int quantity?;
-    float unitPrice?;
+    string item_name?;
+    string image_url?;
+    float unit_price?;
     string description?;
 |};
 

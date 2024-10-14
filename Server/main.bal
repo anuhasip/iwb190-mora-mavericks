@@ -542,7 +542,7 @@ resource function get item_details/[string id](http:Caller caller, http:Request 
     }
 
     //Delete an item
-    resource function delete items/[string id]() returns string|error {
+    resource function delete item_delete/[string id]() returns string|error {
         map<json> filter = {_id : {"$oid": id}};
         mongodb:DeleteResult deleteResult = check self.items->deleteOne(filter);
         if deleteResult.deletedCount != 1 {
