@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { UserContext } from "../components/UserContext";
+import { UserContext } from "../../components/UserContext";
 
 function ShopLogin() {
   const {setUser} = useContext(UserContext)
@@ -13,7 +13,7 @@ function ShopLogin() {
     setLogin({ ...login, [e.target.id]: e.target.value });
   };
 
-  const url = `${process.env.REACT_APP_API_URL}/api/login`;
+  const url = `${process.env.REACT_APP_API_URL}/api/shop_login`;
 
   const handleSubmit = (e) => {
     if (login.email == "" || login.password.length < 8)
@@ -29,8 +29,8 @@ function ShopLogin() {
         if (!response.data.login) {
           setLogerr(response.data.message);
         } else {
-          setUser({c_id: response.data.c_id, fname: response.data.user_name});
-          navigate("/");
+          setUser({c_id: response.data.s_id, fname: response.data.name,shop:true});
+          navigate("/shop");
         }
       })
       .catch((error) => {

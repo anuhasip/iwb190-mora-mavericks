@@ -14,19 +14,19 @@ const options = {
   zoomControl: true,
 };
 
-function ShopRegister() {
-  const { isLoaded } = useLoadScript({
-    googleMapsApiKey: "AIzaSyD47tgfGBWU0eZol01gO3Nz0TyFObCojL8", // Replace with your API key
-    libraries,
-  });
-  const [address, setAddress] = useState('');
-  const [coordinates, setCoordinates] = useState({ lat: 6.927079, lng: 79.861244 }); // Default to San Francisco
-  
-  
-
-  const [register, setRegister] = useState({ email: "", password: "", name: "", image_url: "", description: "", address:"" });
+function Register() {
+  const [register, setRegister] = useState({ email: "", password: "", name: "",image_url:"", location: "",description:"" });
   const [regerr, setRegerr] = useState("");
   const navigate = useNavigate();
+  const [address, setAddress] = useState('');
+  const [coordinates, setCoordinates] = useState({ lat: 37.7749, lng: -122.4194 })
+  
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: "AIzaSyD47tgfGBWU0eZol01gO3Nz0TyFObCojL8", 
+    libraries,
+  });
+
+  
   const handleSelect = async (value) => {
     setAddress(value);
     try {
@@ -39,6 +39,7 @@ function ShopRegister() {
   };
 
   if (!isLoaded) return <div>Loading Maps...</div>;
+  
   const handleOnChange = (e) => {
     if (e.target.id == "phone_number") {
         var regex = /^(?:|\d+)$/;
@@ -51,7 +52,7 @@ function ShopRegister() {
     console.log(register);
   };
 
-  const url = `${process.env.REACT_APP_API_URL}/api/signup`;
+  const url = `${process.env.REACT_APP_API_URL}/api/shop_signup`;
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -61,7 +62,7 @@ function ShopRegister() {
       .post(url, register)
       .then((response) => {
         console.log(response.status, response.data);
-        navigate("/login");
+        navigate("/shop-login");
       })
       .catch((error) => {
         setRegerr(error.response.data.message);
@@ -111,7 +112,7 @@ function ShopRegister() {
       className="container"
     >
       <div className="mb-5 row">
-        <h1 className="display-6 text-center fw-semibold">Register Your Shop</h1>
+        <h1 className="display-4 text-center fw-semibold">Register</h1>
       </div>
       <div className="mb-3 mx-1 row">
         <input
@@ -140,7 +141,7 @@ function ShopRegister() {
           type="url"
           className="form-control"
           maxLength={255}
-          placeholder="Shop Image Url"
+          placeholder="Image Url"
           id="image_url"
           value={register.image_url}
           onChange={handleOnChange}
@@ -148,59 +149,72 @@ function ShopRegister() {
       </div>
       <div className="mb-3 mx-1 row">
         <textarea
-          type="text"
           className="form-control"
+          maxLength={255}
           placeholder="Description"
           id="description"
+          
           onChange={handleOnChange}
-        >
-          {register.description}
-          </textarea>
-      </div>
-      <div className="mb-3 mx-1 row">
-        {/* Places Autocomplete Input */}
-        <PlacesAutocomplete
-          value={address}
-          onChange={setAddress}
-          onSelect={handleSelect}
-        >
-          {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
-            <div>
-              <input
-                {...getInputProps({
-                  placeholder: 'Find a Location',
-                })}
-                className="address-input form-control"
-                id ="location"
-                style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
-              />
-              <div>
-                {loading && <div>Loading suggestions...</div>}
-                {suggestions.map((suggestion) => {
-                  const style = {
-                    backgroundColor: suggestion.active ? '#41b6e6' : '#fff',
-                    cursor: 'pointer',
-                    padding: '10px',
-                  };
-                  return (
-                    <div
-                      {...getSuggestionItemProps(suggestion, { style })}
-                      key={suggestion.placeId}
-                    >
-                      {suggestion.description}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </PlacesAutocomplete>
-
-        
-        
-    
+        >{register.description}
+            </textarea>
       </div>
       
+      
+      
+      <div className="mb-3 mx-1 row">
+      <div>
+      <p>Find a Location</p>
+      
+      {/* Places Autocomplete Input */}
+      {/* <PlacesAutocomplete
+        value={address}
+        onChange={setAddress}
+        onSelect={handleSelect}
+      >
+        {({ getInputProps, suggestions, getSuggestionItemProps, loading }) => (
+          <div>
+            <input
+              {...getInputProps({
+                placeholder: 'Type an address',
+              })}
+              id = "address"
+              className="address-input"
+               style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
+            />
+            <div>
+              {loading && <div>Loading suggestions...</div>}
+              {suggestions.map((suggestion) => {
+                const style = {
+                  backgroundColor: suggestion.active ? '#41b6e6' : '#fff',
+                  cursor: 'pointer',
+                  padding: '10px',
+                };
+                return (
+                  <div
+                    {...getSuggestionItemProps(suggestion, { style })}
+                    key={suggestion.placeId}
+                  >
+                    {suggestion.description}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+      </PlacesAutocomplete> */}
+        <input
+          type="url"
+          className="form-control"
+          maxLength={255}
+          placeholder="Location"
+          id="location"
+          value={register.location}
+          onChange={handleOnChange}
+        />
+      
+    </div>
+
+      </div>
       <div className="mb-3 mx-1 row">
         <input
           type="password"
@@ -212,6 +226,8 @@ function ShopRegister() {
           onChange={handleOnChange}
         />
       </div>
+      
+
       <div className="mb-3 row">
         <button
           className="btn btn-primary mt-2"
@@ -227,7 +243,7 @@ function ShopRegister() {
       <div className="mb-3 row text-center">
         <p>
           Already a member?{" "}
-          <Link to="/shop-login" className="text-decoration-none">
+          <Link to="/login" className="text-decoration-none">
             Login
           </Link>
         </p>
@@ -236,4 +252,4 @@ function ShopRegister() {
   );
 }
 
-export default ShopRegister;
+export default Register;
