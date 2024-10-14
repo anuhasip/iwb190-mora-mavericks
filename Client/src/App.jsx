@@ -20,13 +20,16 @@ import Wishlist from "./pages/user/Wishlist";
 import About from "./pages/user/About";
 import Profile from "./pages/user/Profie";
 import NotFound from "./pages/NotFound";
+import ShopLogin from "./pages/shop/Login";
+import ShopRegister from "./pages/shop/Register";
+import Shop from "./pages/shop/Shop";
 
 
 function App() {
 
   const [pageData, setPageData] = useState({});
 
-  const [user, setUser] = useState({c_id: null, fname: null})
+  const [user, setUser] = useState({c_id: null, fname: null,shop:false})
 
   useEffect(() => {
     setPageData(JsonData);
@@ -59,6 +62,14 @@ function App() {
               element={<Login />}
             />
             <Route
+              path="/shop-login"
+              element={<ShopLogin />}
+            />
+            <Route
+              path="/shop-register"
+              element={<ShopRegister />}
+            />
+            <Route
               path="/cart"
               element={<Cart />}
             />
@@ -73,6 +84,10 @@ function App() {
             <Route
               path="/profile"
               element={<Profile />}
+            />
+            <Route
+              path="/shop"
+              element={<Shop />}
             />
             <Route
               path="*"

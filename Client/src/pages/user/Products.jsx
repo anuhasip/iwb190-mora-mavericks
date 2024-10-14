@@ -23,7 +23,7 @@ function Products() {
     };
 
     useEffect(() => {
-        if (!user.c_id)
+        if (!user.c_id )
         {
             navigate("/login");
         }

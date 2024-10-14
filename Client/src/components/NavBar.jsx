@@ -46,6 +46,7 @@ function NavBar(props) {
                 </Link>
               </li>
               
+              
             </ul>
             {/* <form className="d-flex" role="search">
               <input
@@ -65,11 +66,17 @@ function NavBar(props) {
               <Link to="/wish-list" className="btn">
               <i className="bi bi-heart-fill"></i>
               </Link>
+              
               {!user.c_id 
               ? <Link to="/login" className="btn btn-primary"> Login / Register </Link> 
               : <Link to="/profile" className="btn text-decoration-none"><i className="bi bi-person-circle"></i> {user.fname} </Link>}
               
-              </div>
+            </div>
+            <div className="d-flex">
+            <Link to="/shop-login" className="btn btn-primary"> Shop Login / Register </Link>
+              
+              
+            </div>
           </div>
         </div>
       </nav>
