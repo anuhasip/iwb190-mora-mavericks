@@ -1,6 +1,6 @@
-import Product from "../components/products/Product";
+import Product from "../../components/products/Product";
 
-import { UserContext } from "../components/UserContext";
+import { UserContext } from "../../components/UserContext";
 
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import React, { useState, useEffect, useContext } from "react";
@@ -15,7 +15,7 @@ function Products() {
 
     const category = categoryParams.get('category');
 
-    const url = `${process.env.REACT_APP_API_URL}/api/products/`;
+    const url = `${process.env.REACT_APP_API_URL}/api/item_details_all/`;
     const [products, setProducts] = useState(null);
 
     const fetchInfo = () => {
@@ -44,11 +44,11 @@ function Products() {
             {products ? products.map((product) => {
                 return (
                     <Product 
-                        key={product.p_id}
-                        p_id={product.p_id}
-                        p_name={product.p_name}
-                        price={product.price}
-                        img_link={product.img_link}
+                        key={product.item_id}
+                        p_id={product.item_id}
+                        p_name={product.item_name}
+                        price={product.unit_price}
+                        img_link={product.img_url}
                     />
                 );
             }) : "Loading..."}

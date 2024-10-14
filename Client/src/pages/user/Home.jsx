@@ -1,7 +1,7 @@
-import Carousel from "../components/home/Carousel";
-import Category from "../components/Category";
-import Services from "../components/home/Services";
-import Flyer from "../components/home/Flyer";
+import Carousel from "../../components/home/Carousel";
+import Category from "../../components/Category";
+import Services from "../../components/home/Services";
+import Flyer from "../../components/home/Flyer";
 
 function Home() {
     return ( 

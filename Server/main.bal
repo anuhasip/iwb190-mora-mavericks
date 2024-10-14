@@ -437,6 +437,55 @@ resource function get item_details_all(http:Caller caller, http:Request req) ret
 }
 
 
+// Get items by shop id
+resource function get item_details_by_shop/[string shop_id](http:Caller caller, http:Request req) returns error? {
+    // Create an empty filter to fetch all documents
+    map<json> filter = {shop_id : shop_id};
+
+    // Fetch all items from the MongoDB collection
+    stream<ItemRecord, error?> itemStream = check self.items->find(filter);
+
+    // Initialize an array to hold all item records with the `$oid` extracted
+    json[] itemList = [];
+
+    // Loop through the stream and collect the item records with `$oid`
+    error? nextResult = itemStream.forEach(function(ItemRecord item) {
+        // Extract the `$oid` from the _id field (assuming it's in the format {"$oid": "some_oid"})
+        json idField = item._id;
+        if idField is map<json> {
+            string? itemId = idField["$oid"].toString();
+            // Append a new record with extracted `$oid`
+            json modifiedItem = {
+                item_id: itemId,
+                item_name: item.item_name,
+                image_url: item.image_url,
+                unit_price: item.unit_price
+            };
+
+            itemList.push(modifiedItem);
+        }
+        
+    });
+
+    if (nextResult is error) {
+        log:printError("Error occurred while retrieving items");
+        json errorResponse = { "message": "Error occurred while retrieving items" };
+        http:Response conflictResponse = new;
+        conflictResponse.statusCode = 500;
+        conflictResponse.setJsonPayload(errorResponse);
+        check caller->respond(conflictResponse);
+        return;
+    }
+
+    // Send the list of items with `$oid` in the response
+    http:Response response = new;
+    response.statusCode = 200;
+    response.setJsonPayload(itemList);
+    check caller->respond(response);
+}
+
+
+
     //Get item by ID
 resource function get item_details/[string id](http:Caller caller, http:Request req) returns error? {
     
