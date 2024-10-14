@@ -20,6 +20,8 @@ import Wishlist from "./pages/user/Wishlist";
 import About from "./pages/user/About";
 import Profile from "./pages/user/Profie";
 import NotFound from "./pages/NotFound";
+import ShopLogin from "./pages/ShopLogin";
+import ShopRegister from "./pages/shop/ShopRegister";
 
 
 function App() {
@@ -57,6 +59,14 @@ function App() {
             <Route
               path="/login"
               element={<Login />}
+            />
+            <Route
+              path="/shop-login"
+              element={<ShopLogin />}
+            />
+            <Route
+              path="/shop-register"
+              element={<ShopRegister />}
             />
             <Route
               path="/cart"
