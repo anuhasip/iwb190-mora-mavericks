@@ -20,11 +20,7 @@ import Wishlist from "./pages/user/Wishlist";
 import About from "./pages/user/About";
 import Profile from "./pages/user/Profie";
 import NotFound from "./pages/NotFound";
-<<<<<<< Updated upstream
-import ShopLogin from "./pages/ShopLogin";
-=======
 import ShopLogin from "./pages/shop/ShopLogin";
->>>>>>> Stashed changes
 import ShopRegister from "./pages/shop/ShopRegister";
 
 
