@@ -2,7 +2,7 @@ import React, { useState, useContext, createContext, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from "../../components/UserContext";
-
+import axios from "axios";
 // Create a context for shop ID
 const ShopContext = createContext();
 
@@ -10,34 +10,38 @@ const ShopContext = createContext();
 const ShopDashboard = () => {
     
     
-  const c_id = useContext(UserContext); // Get the shop_id from context
+  const {user} = useContext(UserContext); // Get the shop_id from context
+  const navigate = useNavigate();
 
-  const [products, setProducts] = useState([
+  
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    if (!user.c_id)
     {
-      id: 1,
-      item_name: "Product 1",
-      image_url: "https://via.placeholder.com/150",
-      unit_price: 100,
-      description: "Sample description 1",
-      shop_id: c_id,
-    },
-    {
-      id: 2,
-      item_name: "Product 2",
-      image_url: "https://via.placeholder.com/150",
-      unit_price: 200,
-      description: "Sample description 2",
-      shop_id: c_id,
-    },
-  ]);
+        navigate("/login");
+    }
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/api/item_details_by_shop/${user.c_id}`)
+      .then((response) => {
+        console.log(response.status, response.data);
+        setProducts(response.data);
+      })
+      .catch((error) => {
+        console.log(error.response.data.message);
+      });
+    
+    
+}, []);
+
 
   // Form state for adding a new product
   const [newProduct, setNewProduct] = useState({
     item_name: "",
     image_url: "",
-    unit_price: "",
+    unit_price: 0,
     description: "",
-    shop_id: c_id,
+    shop_id: user.c_id,
   });
 
   // Modal visibility state
@@ -59,14 +63,25 @@ const ShopDashboard = () => {
       ...prevProducts,
       { ...newProduct, id: prevProducts.length + 1 },
     ]);
+    const product = newProduct;
+    product.unit_price = parseFloat(product.unit_price);
+    console.log(product);
+    axios
+      .post(`${process.env.REACT_APP_API_URL}/api/item`, product)
+      .then((response) => {
+        console.log(response.status, response.data);
+      })
+      .catch((error) => {
+        console.log(error.response.data.message);
+      });
     setShowModal(false); // Close the modal
     // Clear form
     setNewProduct({
       item_name: "",
       image_url: "",
-      unit_price: "",
+      unit_price: 0,
       description: "",
-      shop_id: c_id,
+      shop_id: user.c_id,
     });
   };
 
@@ -96,7 +111,7 @@ const ShopDashboard = () => {
                     <h5 className="card-title">{product.item_name}</h5>
                     <p className="card-text">{product.description}</p>
                     <p className="card-text">
-                      <strong>Price: </strong>${product.unit_price}
+                      <strong>Price: </strong>{product.unit_price.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, 'Rs.1,')}
                     </p>
                     <button
                       className="btn btn-danger"

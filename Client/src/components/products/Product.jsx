@@ -8,7 +8,7 @@ function Product(props) {
       <div className="card-body">
         <h6 className="card-title">{props.p_name}</h6>
         <p className="card-text fw-bold fs-5 text-primary">
-          Rs.{props.price.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1,')}
+          Rs.{props.price.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, 'Rs.1,')}
         </p>
       </div>
     </Link>
