@@ -1,6 +1,7 @@
 import React, { useState, useContext, createContext, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useNavigate } from 'react-router-dom';
+import { UserContext } from "../../components/UserContext";
 
 // Create a context for shop ID
 const ShopContext = createContext();
@@ -9,7 +10,7 @@ const ShopContext = createContext();
 const ShopDashboard = () => {
     
     
-  const c_id = useContext(ShopContext); // Get the shop_id from context
+  const c_id = useContext(UserContext); // Get the shop_id from context
 
   const [products, setProducts] = useState([
     {
