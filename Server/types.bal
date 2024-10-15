@@ -77,21 +77,27 @@ public type ItemFullRecord record {|
     string image_url;
     float unit_price;
     string description;
-    string shop_id;
+    string category;
+    string shop_id;    
+    string keywords;
 |};
 
 public type ItemRecord record {|
     json _id;
     string item_name;
     string image_url;
+    string category;
     float unit_price;
+    string keywords;
 |};
 
 public type ItemUpdate record {|
     string item_name?;
     string image_url?;
     float unit_price?;
-    string description?;
+    string category?;
+    string description?;    
+    string keywords?;
 |};
 
 public type Item record {|

@@ -15,11 +15,11 @@ function Products() {
 
     const category = categoryParams.get('category');
 
-    const url = `${process.env.REACT_APP_API_URL}/api/item_details_all/`;
+    const url = category ? `${process.env.REACT_APP_API_URL}/api/item_details_by_category/${category}` : `${process.env.REACT_APP_API_URL}/api/item_details_all/`;
     const [products, setProducts] = useState(null);
 
     const fetchInfo = () => {
-        return axios.get(url, {params : {category: category}}).then((res) => setProducts(res.data));
+        return axios.get(url).then((res) => setProducts(res.data));
     };
 
     useEffect(() => {

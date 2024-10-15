@@ -1,28 +1,26 @@
 import React, { useState, useContext, createContext, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../components/UserContext";
 import axios from "axios";
+import Category from "../../components/Category";
 // Create a context for shop ID
 const ShopContext = createContext();
 
-
 const ShopDashboard = () => {
-    
-    
-  const {user} = useContext(UserContext); // Get the shop_id from context
+  const { user } = useContext(UserContext); // Get the shop_id from context
   const navigate = useNavigate();
 
-  
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
-    if (!user.c_id)
-    {
-        navigate("/login");
+    if (!user.c_id) {
+      navigate("/shop-login");
     }
     axios
-      .get(`${process.env.REACT_APP_API_URL}/api/item_details_by_shop/${user.c_id}`)
+      .get(
+        `${process.env.REACT_APP_API_URL}/api/item_details_by_shop/${user.c_id}`
+      )
       .then((response) => {
         console.log(response.status, response.data);
         setProducts(response.data);
@@ -30,10 +28,20 @@ const ShopDashboard = () => {
       .catch((error) => {
         console.log(error.response.data.message);
       });
-    
-    
-}, []);
+  }, []);
 
+  const categories = [
+    "Electronics",
+    "Clothing",
+    "Home & Kitchen",
+    "Books",
+    "Beauty & Personal Care",
+    "Sports & Outdoors",
+    "Toys & Games",
+    "Automotive",
+    "Health & Wellness",
+    "Jewelry & Accessories",
+  ];
 
   // Form state for adding a new product
   const [newProduct, setNewProduct] = useState({
@@ -41,6 +49,8 @@ const ShopDashboard = () => {
     image_url: "",
     unit_price: 0,
     description: "",
+    category: "",
+    keywords: "",
     shop_id: user.c_id,
   });
 
@@ -54,6 +64,13 @@ const ShopDashboard = () => {
       ...prevProduct,
       [name]: value,
     }));
+  };
+
+  const handleKeywordsChange = (e) => {
+    const value = e.target.value;
+    // Split the input by commas and trim each keyword to avoid unnecessary spaces
+    const keywordsArray = value.split(',').map((keyword) => keyword.trim());
+    setNewProduct({ ...newProduct, keywords: keywordsArray.toString() });
   };
 
   // Handle adding a new product
@@ -81,6 +98,8 @@ const ShopDashboard = () => {
       image_url: "",
       unit_price: 0,
       description: "",
+      category: "",
+      keywords: "",
       shop_id: user.c_id,
     });
   };
@@ -109,9 +128,13 @@ const ShopDashboard = () => {
                   />
                   <div className="card-body">
                     <h5 className="card-title">{product.item_name}</h5>
+                    <p className="card-text">{product.category}</p>
                     <p className="card-text">{product.description}</p>
                     <p className="card-text">
-                      <strong>Price: </strong>{product.unit_price.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, 'Rs.1,')}
+                      <strong>Price: </strong>
+                      {product.unit_price
+                        .toFixed(2)
+                        .replace(/(\d)(?=(\d{3})+(?!\d))/g, "Rs.1,")}
                     </p>
                     <button
                       className="btn btn-danger"
@@ -202,6 +225,35 @@ const ShopDashboard = () => {
                     value={newProduct.description}
                     onChange={handleInputChange}
                     required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Category</label>
+                  <select
+                    className="form-control"
+                    name="category"
+                    value={newProduct.category}
+                    onChange={handleInputChange}
+                    required
+                  >
+                    <option value="">Select a category</option>
+                    {categories.map((category, index) => (
+                      <option key={index} value={category}>
+                        {category}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">
+                    Keywords (comma-separated)
+                  </label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    name="keywords"
+                    placeholder="Enter keywords separated by commas"
+                    onChange={handleInputChange}
                   />
                 </div>
                 <button

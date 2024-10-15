@@ -1,13 +1,12 @@
 import { Link } from "react-router-dom";
 
-import { useContext, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useContext, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { UserContext } from "./UserContext";
-
 
 function NavBar(props) {
   const { pathname } = useLocation();
-  const {user} = useContext(UserContext)
+  const { user } = useContext(UserContext);
 
   // Automatically scrolls to top whenever pathname changes
   useEffect(() => {
@@ -35,18 +34,20 @@ function NavBar(props) {
           <div className="collapse navbar-collapse" id="navbarSupportedContent">
             <ul className="navbar-nav me-auto mb-2 mb-lg-0">
               <li className="nav-item">
-                <Link to="/" className="nav-link">Home</Link>
+                <Link to="/" className="nav-link">
+                  Home
+                </Link>
               </li>
               <li className="nav-item">
-              <Link to="/products" className="nav-link">Shop</Link>
+                <Link to="/products" className="nav-link">
+                  Shop
+                </Link>
               </li>
               <li className="nav-item">
                 <Link className="nav-link" to="/about">
                   About
                 </Link>
               </li>
-              
-              
             </ul>
             {/* <form className="d-flex" role="search">
               <input
@@ -61,21 +62,23 @@ function NavBar(props) {
             </form> */}
             <div className="d-flex">
               <Link to="/cart" className="btn">
-              <i className="bi bi-cart-fill"></i>
+                <i className="bi bi-cart-fill"></i>
               </Link>
               <Link to="/wish-list" className="btn">
-              <i className="bi bi-heart-fill"></i>
+                <i className="bi bi-heart-fill"></i>
               </Link>
-              
-              {!user.c_id 
-              ? <Link to="/login" className="btn btn-primary"> Login / Register </Link> 
-              : <Link to="/profile" className="btn text-decoration-none"><i className="bi bi-person-circle"></i> {user.fname} </Link>}
-              
-            </div>
-            <div className="d-flex">
-            <Link to="/shop-login" className="btn btn-primary"> Shop Login / Register </Link>
-              
-              
+
+              {user.c_id == null && (
+                <Link to="/login" className="btn btn-primary">
+                  {" "}
+                  Login / Register{" "}
+                </Link>
+              )}
+              {user.c_id != null && user.shop == false && (
+                <Link to="/profile" className="btn text-decoration-none">
+                  <i className="bi bi-person-circle"></i> {user.fname}{" "}
+                </Link>
+              )}
             </div>
           </div>
         </div>
