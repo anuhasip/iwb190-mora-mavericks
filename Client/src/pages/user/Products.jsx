@@ -27,25 +27,46 @@ function Products() {
         return axios
           .get(`${process.env.REACT_APP_API_URL}/api/item_details_by_keyword/${keyword}`)
           .then((res) => {
-            setProducts((prevProducts) => [...prevProducts, ...res.data]);
+            // Ensure res.data is an array, or return an empty array if not
+            return Array.isArray(res.data) ? res.data : [];
           })
           .catch((err) => {
             console.error("Error fetching search results: ", err);
+            return []; // Return an empty array on error
           });
       };
+    // const handleSearch = () => {
+    //     // Empty function to be filled later
+    //     setProducts([]);
+    //     console.log("Search button clicked. Query: ", searchQuery);
+    //     const keywords = searchQuery.split(" ");
+    //     keywords.forEach((keyword) => {
+    //         fetchSearch(keyword);  // Pass each keyword to fetchSearch
+    //     });
 
-    const handleSearch = () => {
-        // Empty function to be filled later
-        setProducts([]);
-        console.log("Search button clicked. Query: ", searchQuery);
-        const keywords = searchQuery.split(" ");
-        keywords.forEach((keyword) => {
-            fetchSearch(keyword);  // Pass each keyword to fetchSearch
-        });
-
-        const updatedproducts = products;
+    //     const updatedproducts = products;
         
-    };
+    // };
+    const handleSearch = async () => {
+        setProducts([]); // Clear previous products before a new search
+        console.log("Search button clicked. Query: ", searchQuery);
+    
+        const keywords = searchQuery.split(" ");
+        let allProducts = [];
+    
+        for (const keyword of keywords) {
+          const fetchedProducts = await fetchSearch(keyword);
+          allProducts = [...allProducts, ...fetchedProducts];
+        }
+    
+        // Remove duplicates by item_id
+        const uniqueProducts = allProducts.filter(
+          (product, index, self) =>
+            index === self.findIndex((p) => p.item_id === product.item_id)
+        );
+    
+        setProducts(uniqueProducts); // Update state with unique products
+      };
 
     useEffect(() => {
         if (!user.c_id )
