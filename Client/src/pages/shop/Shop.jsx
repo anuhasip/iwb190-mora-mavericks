@@ -4,8 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../components/UserContext";
 import axios from "axios";
 import Category from "../../components/Category";
-// Create a context for shop ID
-const ShopContext = createContext();
+
 
 const ShopDashboard = () => {
   const { user } = useContext(UserContext); // Get the shop_id from context
@@ -132,9 +131,7 @@ const ShopDashboard = () => {
                     <p className="card-text">{product.description}</p>
                     <p className="card-text">
                       <strong>Price: </strong>
-                      {product.unit_price
-                        .toFixed(2)
-                        .replace(/(\d)(?=(\d{3})+(?!\d))/g, "Rs.1,")}
+                      {Intl.NumberFormat('en-IN', { style: 'currency', currency: 'LKR' }).format(product.unit_price)}
                     </p>
                     <button
                       className="btn btn-danger"
@@ -253,6 +250,7 @@ const ShopDashboard = () => {
                     className="form-control"
                     name="keywords"
                     placeholder="Enter keywords separated by commas"
+                    value={newProduct.keywords}
                     onChange={handleInputChange}
                   />
                 </div>
@@ -272,16 +270,10 @@ const ShopDashboard = () => {
   );
 };
 
-// Sample context provider with shop ID
-const ShopProvider = ({ children }) => {
-  const c_id = 1; // Example shop ID
-  return <ShopContext.Provider value={c_id}>{children}</ShopContext.Provider>;
-};
+
 
 const App = () => (
-  <ShopProvider>
     <ShopDashboard />
-  </ShopProvider>
 );
 
 export default App;

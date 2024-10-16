@@ -76,7 +76,7 @@ function ProductDetails() {
                 <div className="">
                     <h6 className="fs-5">{product && product.item_name}</h6>
                     <p className="fw-bold fs-4 text-primary">
-                        Rs.{product && product.unit_price.toFixed(2).replace(/(\d)(?=(\d{3})+(?!\d))/g, 'Rs.1,')}
+                        {product && Intl.NumberFormat('en-IN', { style: 'currency', currency: 'LKR' }).format(product.unit_price)}
                     </p>
                     
                     <p>{product && product.description}</p>
