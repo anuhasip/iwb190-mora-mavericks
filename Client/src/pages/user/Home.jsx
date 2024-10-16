@@ -2,6 +2,16 @@ import Carousel from "../../components/home/Carousel";
 import Category from "../../components/Category";
 import Services from "../../components/home/Services";
 import Flyer from "../../components/home/Flyer";
+// "Electronics",
+// "Clothing",
+// "Furniture",
+// "Groceries",
+// "Beauty",
+// "Toys",
+// "Sports",
+// "Jewelry",
+// "Footwear",
+// "Appliances"
 
 function Home() {
     return ( 
@@ -10,10 +20,10 @@ function Home() {
         <Carousel/>
         <div className="row mt-3">
         <div className="col-lg-3 col-md-6">
-        <Category img="category1.svg" bgcolor="bg-dark bg-gradient" txt="Earphone"/>
+        <Category img="category1.svg" bgcolor="bg-dark bg-gradient" txt="Electronics"/>
         </div>
         <div className="col-lg-3 col-md-6">
-        <Category img="category2.svg" bgcolor="bg-warning bg-gradient" txt="Headset"/>
+        <Category img="category2.svg" bgcolor="bg-warning bg-gradient" txt="Footwear"/>
         </div>
         <div className="col-lg-6">
         <Category img="category3.svg" bgcolor="bg-danger bg-gradient" txt="Laptop"/>

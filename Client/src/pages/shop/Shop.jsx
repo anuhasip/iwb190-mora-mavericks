@@ -32,14 +32,14 @@ const ShopDashboard = () => {
   const categories = [
     "Electronics",
     "Clothing",
-    "Home & Kitchen",
-    "Books",
-    "Beauty & Personal Care",
-    "Sports & Outdoors",
-    "Toys & Games",
-    "Automotive",
-    "Health & Wellness",
-    "Jewelry & Accessories",
+    "Furniture",
+    "Groceries",
+    "Beauty",
+    "Toys",
+    "Sports",
+    "Jewelry",
+    "Footwear",
+    "Appliances"
   ];
 
   // Form state for adding a new product
