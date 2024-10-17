@@ -40,7 +40,7 @@ function NavBar(props) {
               </li>
               <li className="nav-item">
                 <Link to="/products" className="nav-link">
-                  Shop
+                  Products
                 </Link>
               </li>
               <li className="nav-item">
@@ -61,12 +61,12 @@ function NavBar(props) {
               </button>
             </form> */}
             <div className="d-flex">
-              <Link to="/cart" className="btn">
+              {/* <Link to="/cart" className="btn">
                 <i className="bi bi-cart-fill"></i>
               </Link>
               <Link to="/wish-list" className="btn">
                 <i className="bi bi-heart-fill"></i>
-              </Link>
+              </Link> */}
 
               {user.c_id == null && (
                 <Link to="/login" className="btn btn-primary">
