@@ -2,7 +2,10 @@ import { UserContext } from "../../components/UserContext";
 
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
+import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import axios from "axios";
+
+
 
 function ProductDetails() {
   const { user } = useContext(UserContext);
@@ -17,6 +20,13 @@ function ProductDetails() {
   const [product, setProduct] = useState(null);
 
   const [shop, setShop] = useState(null);
+
+  const [latitude, setLatitude] = useState(null);
+  const [longitude, setLongitude] = useState(null);
+
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: `${process.env.REACT_APP_GOOGLE_MAP}`, 
+  });
 
   const [iswishitem, setIswishitem] = useState(false);
 
@@ -34,6 +44,11 @@ function ProductDetails() {
         .get(`${process.env.REACT_APP_API_URL}/api/shop_details/${shop_id}`)
         .then((res) => {
           setShop(res.data);
+
+          // Parse location (latitude, longitude) from shop.location
+        const [lat, lng] = res.data.location.split(",");
+        setLatitude(parseFloat(lat));
+        setLongitude(parseFloat(lng));
         });
     });
 
@@ -127,15 +142,21 @@ function ProductDetails() {
               <img src={shop.image_url} className="img-fluid" alt="Shop" />
             </div>
             <div className="col-md-8">
-              <p>
-                <strong>Email:</strong> {shop.email}
-              </p>
-              <p>
-                <strong>Description:</strong> {shop.description}
-              </p>
-              <p>
-                <strong>Location:</strong> {shop.location}
-              </p>
+              <p><strong>Email:</strong> {shop.email}</p>
+              <p><strong>Description:</strong> {shop.description}</p>
+
+              {/* Google Map */}
+              {isLoaded && latitude && longitude && (
+                <div className="mt-4">
+                  <GoogleMap
+                    mapContainerStyle={{width: "100%", height: "400px"}}
+                    center={{ lat: latitude, lng: longitude }}
+                    zoom={15}
+                  >
+                    <Marker position={{ lat: latitude, lng: longitude }} />
+                  </GoogleMap>
+                </div>
+              )}
             </div>
           </div>
         </div>

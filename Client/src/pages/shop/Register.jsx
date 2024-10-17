@@ -20,7 +20,7 @@ const options = {
 
 function Register() {
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: "AIzaSyD47tgfGBWU0eZol01gO3Nz0TyFObCojL8", 
+    googleMapsApiKey: `${process.env.REACT_APP_GOOGLE_MAP}`, 
     libraries,
   });
 
