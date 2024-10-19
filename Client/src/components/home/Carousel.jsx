@@ -4,24 +4,24 @@ function Carousel() {
         <div id="carouselExampleAutoplaying" className="carousel slide carousel-fade" data-bs-ride="carousel">
   <div className="carousel-inner">
     <div className="carousel-item active">
-      <img src="carousel1.svg" className="d-block w-100 rounded-5" alt="..." style={{minHeight:"500px"}}/>
+      <img src="car1.png" className="d-block w-100 rounded-5" alt="..." style={{minHeight:"500px"}}/>
       <div className="carousel-caption d-block">
-        <h5 style={{fontSize: "8vw"}} className="opacity-50">Smartphones</h5>
-        <p>Explore Various SmartPhones</p>
+        <h5 style={{fontSize: "8vw"}} className="opacity-50">Find Shops Online</h5>
+        <p>Find everything you need at one place.</p>
       </div>
     </div>
     <div className="carousel-item">
-      <img src="carousel2.svg" className="d-block w-100 rounded-5" alt="..." style={{minHeight:"500px"}}/>
+      <img src="car2.png" className="d-block w-100 rounded-5" alt="..." style={{minHeight:"500px"}}/>
       <div className="carousel-caption d-block">
-        <h5 style={{fontSize: "8vw"}} className="opacity-50">Laptops</h5>
-        <p>Explore Various Laptops</p>
+        <h5 style={{fontSize: "8vw"}} className="opacity-50">Buy Desired Products</h5>
+        <p>Explore everything at one place.</p>
       </div>
     </div>
     <div className="carousel-item">
-      <img src="carousel3.svg" className="d-block w-100 rounded-5" alt="..." style={{minHeight:"500px"}}/>
+      <img src="car3.png" className="d-block w-100 rounded-5" alt="..." style={{minHeight:"500px"}}/>
       <div className="carousel-caption d-block">
-        <h5 style={{fontSize: "8vw"}} className="opacity-50">Various Tech Gadgets</h5>
-        <p>Explore</p>
+        <h5 style={{fontSize: "8vw"}} className="opacity-50">Never Get Lost</h5>
+        <p>Get the exact locations and never waste your time</p>
       </div>
     </div>
   </div>
