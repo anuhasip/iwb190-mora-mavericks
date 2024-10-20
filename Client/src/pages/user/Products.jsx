@@ -106,7 +106,7 @@ function Products() {
                         p_id={product.item_id}
                         p_name={product.item_name}
                         price={product.unit_price}
-                        img_link={product.img_url}
+                        img_link={product.image_url}
                     />
                 );
             }) : "Loading..."}
