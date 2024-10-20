@@ -40,7 +40,7 @@ function Footer(props) {
           <h6 className="text-uppercase fw-bold mb-4">Contact</h6>
           <p><i className="bi bi-house-fill"></i> UOM, Sri Lanka</p>
           <p>
-            <i className="bi bi-envelope-at-fill"></i> e-shop@shop.com
+            <i className="bi bi-envelope-at-fill"></i> FindNshop@shop.com
           </p>
           <p><i className="bi bi-telephone-fill"></i> +01 234 567 88</p>
           
