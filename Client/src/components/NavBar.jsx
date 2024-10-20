@@ -74,7 +74,7 @@ function NavBar(props) {
                   Login / Register{" "}
                 </Link>
               )}
-              {user.c_id != null && user.shop == false && (
+              {(user.c_id !== null && user.shop == false) && (
                 <Link to="/profile" className="btn text-decoration-none">
                   <i className="bi bi-person-circle"></i> {user.fname}{" "}
                 </Link>

@@ -30,7 +30,7 @@ function App() {
 
   const [pageData, setPageData] = useState({});
 
-  const [user, setUser] = useState({c_id: null, fname: null,shop:false})
+  const [user, setUser] = useState({c_id: null, fname: null, shop:false})
 
   useEffect(() => {
     setPageData(JsonData);

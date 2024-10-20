@@ -29,7 +29,7 @@ function Login() {
         if (!response.data.login) {
           setLogerr(response.data.message);
         } else {
-          setUser({c_id: response.data.c_id, fname: response.data.user_name});
+          setUser({c_id: response.data.c_id, fname: response.data.fname, shop: false});
           navigate("/");
         }
       })
