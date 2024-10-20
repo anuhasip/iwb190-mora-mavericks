@@ -4,8 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
 import axios from "axios";
-
-
+import { Link } from "react-router-dom";
 
 function ProductDetails() {
   const { user } = useContext(UserContext);
@@ -25,7 +24,7 @@ function ProductDetails() {
   const [longitude, setLongitude] = useState(null);
 
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: `${process.env.REACT_APP_GOOGLE_MAP}`, 
+    googleMapsApiKey: `${process.env.REACT_APP_GOOGLE_MAP}`,
   });
 
   const [iswishitem, setIswishitem] = useState(false);
@@ -46,9 +45,9 @@ function ProductDetails() {
           setShop(res.data);
 
           // Parse location (latitude, longitude) from shop.location
-        const [lat, lng] = res.data.location.split(",");
-        setLatitude(parseFloat(lat));
-        setLongitude(parseFloat(lng));
+          const [lat, lng] = res.data.location.split(",");
+          setLatitude(parseFloat(lat));
+          setLongitude(parseFloat(lng));
         });
     });
 
@@ -93,7 +92,7 @@ function ProductDetails() {
 
   return (
     <div className="container px-5 mt-5">
-      <div className="row border rounded-5 p-1 d-flex justify-content-evenly">
+      <div className="row border rounded-5 py-5 d-flex justify-content-evenly">
         <div className="col-md-4 p-2 text-center">
           <img
             src={product && product.image_url}
@@ -112,7 +111,7 @@ function ProductDetails() {
         </div>
         <div className="col-md-5 p-2 d-flex align-self-center">
           <div className="">
-            <h6 className="fs-5">{product && product.item_name}</h6>
+            <h1 className="fs-1">{product && product.item_name}</h1>
             <p className="fw-bold fs-4 text-primary">
               {product &&
                 Intl.NumberFormat("en-IN", {
@@ -131,25 +130,38 @@ function ProductDetails() {
             </button> */}
           </div>
         </div>
-      </div>
 
-      {/* Shop details section */}
+        {/* Shop details section */}
+        
       {shop && (
         <div className="mt-5">
-          <h4 className="text-center">{shop.name}</h4>
-          <div className="row justify-content-center">
+          
+          <div className="row justify-content-evenly">
             <div className="col-md-4 text-center">
               <img src={shop.image_url} className="img-fluid" alt="Shop" />
             </div>
             <div className="col-md-8">
-              <p><strong>Email:</strong> {shop.email}</p>
-              <p><strong>Description:</strong> {shop.description}</p>
+            <h4 className="fs-4">{shop.name}</h4>
+              <p>
+                <strong>Email:</strong> {shop.email}
+              </p>
+              <p>
+                <strong>Description:</strong> {shop.description}
+              </p>
+              <Link
+                to={{
+                  pathname: `/products/${product.shop_id}`
+                }}
+                className="btn btn-primary rounded-pill fw-bold px-4"
+              >
+                Browse Products
+              </Link>
 
               {/* Google Map */}
               {isLoaded && latitude && longitude && (
                 <div className="mt-4">
                   <GoogleMap
-                    mapContainerStyle={{width: "100%", height: "400px"}}
+                    mapContainerStyle={{ width: "100%", height: "400px" }}
                     center={{ lat: latitude, lng: longitude }}
                     zoom={15}
                   >
@@ -161,6 +173,10 @@ function ProductDetails() {
           </div>
         </div>
       )}
+
+      </div>
+
+      
     </div>
   );
 }

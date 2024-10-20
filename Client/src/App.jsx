@@ -23,6 +23,7 @@ import NotFound from "./pages/NotFound";
 import ShopLogin from "./pages/shop/Login";
 import ShopRegister from "./pages/shop/Register";
 import Shop from "./pages/shop/Shop";
+import ProductsByShop from "./pages/user/ProductsByShop";
 
 
 function App() {
@@ -48,6 +49,10 @@ function App() {
             <Route
               path="/products"
               element={<Products />}
+            />
+            <Route
+              path="/products/:shop_id"
+              element={<ProductsByShop />}
             />
             <Route
               path="/product/:id"
