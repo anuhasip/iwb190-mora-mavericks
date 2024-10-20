@@ -59,9 +59,9 @@ function Home() {
         <Services />
         </div> */}
 
-        <div className="pt-5">
+        {/* <div className="pt-5">
         <Flyer />
-        </div>
+        </div> */}
         
 
         </div>

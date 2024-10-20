@@ -12,7 +12,7 @@ function Footer(props) {
             {props.data.storeName}
             </h1>
           <p>
-          E-shop combines innovative technology with imaginative design to create innovative electrical gadgets that inspire creativity, simplify lives, and empower people. Committed to sustainability, they reimagine possibilities for tomorrow.
+          FindNShop combines innovative technology with imaginative design to create innovative electrical gadgets that inspire creativity, simplify lives, and empower people. Committed to sustainability, they reimagine possibilities for tomorrow.
           </p>
         </div>
         
