@@ -66,6 +66,12 @@ function Register() {
           flag = false;
         }
       }
+      if (key == ("password")) {
+        if (value.length < 8) {
+          document.getElementById(key).style.borderColor = "#ff0000";
+          flag = false;
+        }
+      }
       
       //console.log(`Key: ${key}, Value: ${value}`);
     });
