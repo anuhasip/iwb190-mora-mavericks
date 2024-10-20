@@ -5,7 +5,6 @@ import { UserContext } from "../../components/UserContext";
 import axios from "axios";
 import Category from "../../components/Category";
 
-
 const ShopDashboard = () => {
   const { user } = useContext(UserContext); // Get the shop_id from context
   const navigate = useNavigate();
@@ -39,7 +38,7 @@ const ShopDashboard = () => {
     "Sports",
     "Jewelry",
     "Footwear",
-    "Appliances"
+    "Appliances",
   ];
 
   // Form state for adding a new product
@@ -68,7 +67,7 @@ const ShopDashboard = () => {
   const handleKeywordsChange = (e) => {
     const value = e.target.value;
     // Split the input by commas and trim each keyword to avoid unnecessary spaces
-    const keywordsArray = value.split(',').map((keyword) => keyword.trim());
+    const keywordsArray = value.split(",").map((keyword) => keyword.trim());
     setNewProduct({ ...newProduct, keywords: keywordsArray.toString() });
   };
 
@@ -127,11 +126,12 @@ const ShopDashboard = () => {
                   />
                   <div className="card-body">
                     <h5 className="card-title">{product.item_name}</h5>
-                    <p className="card-text">{product.category}</p>
-                    <p className="card-text">{product.description}</p>
                     <p className="card-text">
                       <strong>Price: </strong>
-                      {Intl.NumberFormat('en-IN', { style: 'currency', currency: 'LKR' }).format(product.unit_price)}
+                      {Intl.NumberFormat("en-IN", {
+                        style: "currency",
+                        currency: "LKR",
+                      }).format(product.unit_price)}
                     </p>
                     <button
                       className="btn btn-danger"
@@ -139,6 +139,7 @@ const ShopDashboard = () => {
                     >
                       Delete
                     </button>
+                    
                   </div>
                 </div>
               </div>
@@ -270,10 +271,6 @@ const ShopDashboard = () => {
   );
 };
 
-
-
-const App = () => (
-    <ShopDashboard />
-);
+const App = () => <ShopDashboard />;
 
 export default App;

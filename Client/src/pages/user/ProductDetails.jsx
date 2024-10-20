@@ -134,13 +134,13 @@ function ProductDetails() {
         {/* Shop details section */}
         
       {shop && (
-        <div className="mt-5">
+        <div className="pt-4 mt-4 border-top">
           
           <div className="row justify-content-evenly">
             <div className="col-md-4 text-center">
               <img src={shop.image_url} className="img-fluid" alt="Shop" />
             </div>
-            <div className="col-md-8">
+            <div className="col-md-5">
             <h4 className="fs-4">{shop.name}</h4>
               <p>
                 <strong>Email:</strong> {shop.email}
@@ -157,7 +157,10 @@ function ProductDetails() {
                 Browse Products
               </Link>
 
-              {/* Google Map */}
+              
+            </div>
+            <div className="px-5">
+                {/* Google Map */}
               {isLoaded && latitude && longitude && (
                 <div className="mt-4">
                   <GoogleMap
