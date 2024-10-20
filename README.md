@@ -1,6 +1,6 @@
-# E-shop
+# FindNshop
 
-E-shop is a full-stack e-commerce web application designed to offer a seamless shopping experience. The project is built with **React** for the frontend and **Ballerina** for the backend.
+FindNshop is a full-stack e-commerce web application designed to offer a seamless shopping experience. The project is built with **React** for the frontend and **Ballerina** for the backend.
 
 ## Features
 
